@@ -6,7 +6,7 @@
 /*   By: jmarsal <jmarsal@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/21 19:47:53 by jmarsal           #+#    #+#             */
-/*   Updated: 2016/05/13 14:40:41 by jmarsal          ###   ########.fr       */
+/*   Updated: 2016/05/13 16:14:33 by jmarsal          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,14 +77,11 @@ static int		get_the_rest_of_line(t_gnl *gnl, char **line)
 			return (-1);
 		if ((new_line = ft_strjoin(*line, tmp)) == NULL)
 			return (-1);
-		//free(*line);
+		free(*line);
 		ft_bzero(*line, BUFF_SIZE);
 		free(tmp);
-		if ((*line = ft_memalloc(BUFF_SIZE)) == NULL)
-			return (-1);
-		//*line = ft_strdup(new_line);
 		*line = new_line;
-		//new_line = NULL;
+		free(new_line);
 		gnl->rest_caract = ft_abs(ft_strlen(rest_of_line) -
 							ft_strlen(gnl->buffer)) + 1;
 	}
@@ -115,14 +112,8 @@ static	int		read_line(t_gnl *gnl, char **line)
 		if ((str_get_before = ft_strjoin(*line, &gnl->buffer[gnl->rest_caract]))
 									== NULL)
 			return (-1);
-	//	free(*line);
-		//ft_memdel(&line);
-		ft_bzero(*line, BUFF_SIZE);
-		//*line = ft_strdup(str_get_before);
-		//if ((*line = ft_strnew(BUFF_SIZE + 1)) == NULL)
-		//	return (-1);
+		free(*line);
 		*line = str_get_before;
-		//str_get_before = NULL;
 		if ((len = gnl_read(gnl)) < 1)
 			break ;
 	}
