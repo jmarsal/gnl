@@ -6,7 +6,7 @@
 /*   By: jmarsal <jmarsal@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/21 19:47:53 by jmarsal           #+#    #+#             */
-/*   Updated: 2016/05/13 16:14:33 by jmarsal          ###   ########.fr       */
+/*   Updated: 2016/05/17 15:46:27 by jmarsal          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,20 @@ static int			gnl_read(t_gnl *gnl)
 {
 	int		result;
 
+	ft_bzero(gnl->buffer, BUFF_SIZE);
 	if ((result = read(gnl->fd, gnl->buffer, BUFF_SIZE)) >= 0)
 	{
 		gnl->buffer[result] = '\0';
 		gnl->rest_caract = 0;
 	}
-	if (result == -1)
+	else if (result == -1)
 		return (-1);
 	return (result);
 }
 
 /*
-**	Initializes a link to each new file and places it at the end of the list.
-*/
+ **	Initializes a link to each new file and places it at the end of the list.
+ */
 
 static	t_gnl	*initializes_and_push(t_gnl **other_files, int fd)
 {
@@ -54,13 +55,13 @@ static	t_gnl	*initializes_and_push(t_gnl **other_files, int fd)
 }
 
 /*
-**	1) Fill the string "rest_of_line" with the rest of the buffer after the \n.
-**	2) Fill the string "tmp" which has not been copied to the string
-**	"new_line" and being before the '\n'.
-**	3) Concate in the string "new line" , the contents of line + tmp.
-**	4 ) Stock the numbers of characters remaining after the \n to
-**	"gnl->rest_caract".
-*/
+ **	1) Fill the string "rest_of_line" with the rest of the buffer after the \n.
+ **	2) Fill the string "tmp" which has not been copied to the string
+ **	"new_line" and being before the '\n'.
+ **	3) Concate in the string "new line" , the contents of line + tmp.
+ **	4 ) Stock the numbers of characters remaining after the \n to
+ **	"gnl->rest_caract".
+ */
 
 static int		get_the_rest_of_line(t_gnl *gnl, char **line)
 {
@@ -69,34 +70,37 @@ static int		get_the_rest_of_line(t_gnl *gnl, char **line)
 	char		*new_line;
 
 	if ((rest_of_line = ft_strchr(&gnl->buffer[gnl->rest_caract], '\n'))
-									!= NULL)
+			!= NULL)
 	{
 		if ((tmp = ft_strsub(gnl->buffer, gnl->rest_caract,
-				ft_abs(ft_strlen(rest_of_line) - ft_strlen(gnl->buffer)) -
-					gnl->rest_caract)) == NULL)
+						ft_abs(ft_strlen(rest_of_line) - ft_strlen(gnl->buffer)) -
+						gnl->rest_caract)) == NULL)
 			return (-1);
 		if ((new_line = ft_strjoin(*line, tmp)) == NULL)
 			return (-1);
-		free(*line);
+		//if (*line)
+		//	free(*line);
 		ft_bzero(*line, BUFF_SIZE);
-		free(tmp);
+		//if (tmp)
+		//	free(tmp);
 		*line = new_line;
-		free(new_line);
+		//if (new_line)
+		//	free(new_line);
 		gnl->rest_caract = ft_abs(ft_strlen(rest_of_line) -
-							ft_strlen(gnl->buffer)) + 1;
+				ft_strlen(gnl->buffer)) + 1;
 	}
 	return (1);
 }
 
 /*
-**	1) initializes the string "line".
-**	2) check if '\n' is in the buffer otherwise, loop the read until there is
-**	not a '\n' and the concatenated string "str_get_before" of the buffer
-**	contents .
-**	3 ) Stock "str_get_before" content into the string "line" .
-**	4) if a '\n' is located , recovered the string "line" the entire contents
-**	of the string before '\n' with the function "get_the_rest_of_line".
-*/
+ **	1) initializes the string "line".
+ **	2) check if '\n' is in the buffer otherwise, loop the read until there is
+ **	not a '\n' and the concatenated string "str_get_before" of the buffer
+ **	contents .
+ **	3 ) Stock "str_get_before" content into the string "line" .
+ **	4) if a '\n' is located , recovered the string "line" the entire contents
+ **	of the string before '\n' with the function "get_the_rest_of_line".
+ */
 
 static	int		read_line(t_gnl *gnl, char **line)
 {
@@ -107,12 +111,13 @@ static	int		read_line(t_gnl *gnl, char **line)
 	if ((*line = ft_strnew(0)) == NULL)
 		return (-1);
 	while ((read_buffer = ft_strchr(&gnl->buffer[gnl->rest_caract], '\n'))
-									== NULL)
+			== NULL)
 	{
 		if ((str_get_before = ft_strjoin(*line, &gnl->buffer[gnl->rest_caract]))
-									== NULL)
+				== NULL)
 			return (-1);
-		free(*line);
+		//if (*line)
+		//	free(*line);
 		*line = str_get_before;
 		if ((len = gnl_read(gnl)) < 1)
 			break ;
@@ -120,16 +125,16 @@ static	int		read_line(t_gnl *gnl, char **line)
 	if (len == -1 || get_the_rest_of_line(gnl, line) == -1)
 		return (-1);
 	if (len == 0 && (*line)[0] == '\0')
-			return (0);
+		return (0);
 	return (1);
 }
 
 /*
-**	1) fd compared with those stored in the list.
-**	2) if it is in the list then continues gnl otherwise create a new link and
-**	puts it at the end of the list.
-**	3) gets and returns the function return "read_line".
-*/
+ **	1) fd compared with those stored in the list.
+ **	2) if it is in the list then continues gnl otherwise create a new link and
+ **	puts it at the end of the list.
+ **	3) gets and returns the function return "read_line".
+ */
 
 int				get_next_line(const int fd, char **line)
 {

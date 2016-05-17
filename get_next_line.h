@@ -6,13 +6,13 @@
 /*   By: jmarsal <jmarsal@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/21 19:34:22 by jmarsal           #+#    #+#             */
-/*   Updated: 2016/05/13 13:56:49 by jmarsal          ###   ########.fr       */
+/*   Updated: 2016/05/17 15:40:18 by jmarsal          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-# define BUFF_SIZE 1
+# define BUFF_SIZE 1024
 
 # include "libft.h"
 # include <unistd.h>
