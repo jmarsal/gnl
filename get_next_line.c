@@ -3,159 +3,114 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmarsal <jmarsal@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jmarsal  <jmarsal @student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/21 19:47:53 by jmarsal           #+#    #+#             */
-/*   Updated: 2016/05/13 16:14:33 by jmarsal          ###   ########.fr       */
+/*   Updated: 2016/05/21 00:50:54 by jmarsal          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static int			gnl_read(t_gnl *gnl)
+static t_line	*add_elem(t_line **list, int fd)
 {
-	int		result;
+	t_line	*new;
+	t_line	*cur;
 
-	if ((result = read(gnl->fd, gnl->buffer, BUFF_SIZE)) >= 0)
-	{
-		gnl->buffer[result] = '\0';
-		gnl->rest_caract = 0;
-	}
-	if (result == -1)
-		return (-1);
-	return (result);
-}
-
-/*
-**	Initializes a link to each new file and places it at the end of the list.
-*/
-
-static	t_gnl	*initializes_and_push(t_gnl **other_files, int fd)
-{
-	t_gnl	*new_link;
-	t_gnl	*cur;
-
-	if ((new_link = (t_gnl *)malloc(sizeof(t_gnl))) == NULL)
+	if (!(new = (t_line *)malloc(sizeof(t_line))))
 		return (NULL);
-	new_link->fd = fd;
-	new_link->rest_caract = 0;
-	new_link->buffer[0] = '\0';
-	new_link->next = NULL;
-	if (*other_files == NULL)
-		*other_files = new_link;
+	new->fd = fd;
+	new->line = ft_strnew(0);
+	new->next = NULL;
+	if (*list == NULL)
+		*list = new;
 	else
 	{
-		cur = *other_files;
+		cur = *list;
 		while (cur->next)
 			cur = cur->next;
-		cur->next = new_link;
+		cur->next = new;
 	}
-	return (new_link);
+	return (new);
 }
 
-/*
-**	1) Fill the string "rest_of_line" with the rest of the buffer after the \n.
-**	2) Fill the string "tmp" which has not been copied to the string
-**	"new_line" and being before the '\n'.
-**	3) Concate in the string "new line" , the contents of line + tmp.
-**	4 ) Stock the numbers of characters remaining after the \n to
-**	"gnl->rest_caract".
-*/
-
-static int		get_the_rest_of_line(t_gnl *gnl, char **line)
+int				read_file(int fd, t_line *list)
 {
-	char		*rest_of_line;
-	char		*tmp;
-	char		*new_line;
+	int		ret;
+	char	buf[BUFF_SIZE + 1];
+	char	*tmp;
 
-	if ((rest_of_line = ft_strchr(&gnl->buffer[gnl->rest_caract], '\n'))
-									!= NULL)
+//	tmp = NULL;
+	while (!ft_strchr(list->line, EOL))
 	{
-		if ((tmp = ft_strsub(gnl->buffer, gnl->rest_caract,
-				ft_abs(ft_strlen(rest_of_line) - ft_strlen(gnl->buffer)) -
-					gnl->rest_caract)) == NULL)
+		if ((ret = read(fd, buf, BUFF_SIZE)) < 0)
 			return (-1);
-		if ((new_line = ft_strjoin(*line, tmp)) == NULL)
-			return (-1);
-		free(*line);
-		ft_bzero(*line, BUFF_SIZE);
-		free(tmp);
-		*line = new_line;
-		free(new_line);
-		gnl->rest_caract = ft_abs(ft_strlen(rest_of_line) -
-							ft_strlen(gnl->buffer)) + 1;
+		else
+		{
+			buf[ret] = 0;
+			tmp = list->line;
+			if (!(list->line = ft_strjoin(list->line, buf)))
+				return (-1);
+			free(tmp);
+		}
+		if (ret < BUFF_SIZE)
+			return (ret);
 	}
-	return (1);
+	return (ret);
 }
 
-/*
-**	1) initializes the string "line".
-**	2) check if '\n' is in the buffer otherwise, loop the read until there is
-**	not a '\n' and the concatenated string "str_get_before" of the buffer
-**	contents .
-**	3 ) Stock "str_get_before" content into the string "line" .
-**	4) if a '\n' is located , recovered the string "line" the entire contents
-**	of the string before '\n' with the function "get_the_rest_of_line".
-*/
-
-static	int		read_line(t_gnl *gnl, char **line)
+char		*get_line(t_line *list, char **line)
 {
-	char	*str_get_before;
-	char	*read_buffer;
-	int		len;
+	char	*tmp;
+	char	*text;
+	int		i;
 
-	if ((*line = ft_strnew(0)) == NULL)
+//	tmp = NULL;
+	i = 0;
+	text = list->line;
+	while (text[i])
+	{
+		if (text[i] == EOL)
+		{
+			*line = ft_strsub(text, 0, i);
+			tmp = text;
+			text = ft_strdup(text + (i + 1));
+			free(tmp);
+			return (text);
+		}
+		i++;
+	}
+	*line = ft_strdup(text);
+	ft_strclr(text);
+	ft_strclr(list->line);
+	return (text);
+}
+
+int			get_next_line(int const fd, char **line)
+{
+	static	t_line		*file;
+	int					ret;
+	t_line				*tmp;
+
+	//tmp = NULL;
+	if (!file)
+		file = add_elem(&file, fd);
+	tmp = file;
+	if (fd < 0 || !line)
 		return (-1);
-	while ((read_buffer = ft_strchr(&gnl->buffer[gnl->rest_caract], '\n'))
-									== NULL)
+	while (tmp)
 	{
-		if ((str_get_before = ft_strjoin(*line, &gnl->buffer[gnl->rest_caract]))
-									== NULL)
-			return (-1);
-		free(*line);
-		*line = str_get_before;
-		if ((len = gnl_read(gnl)) < 1)
+		if (tmp->fd == fd)
 			break ;
+		if (tmp->next == NULL)
+			add_elem(&file, fd);
+		tmp = tmp->next;
 	}
-	if (len == -1 || get_the_rest_of_line(gnl, line) == -1)
+	if ((ret = read_file(fd, tmp)) == -1)
 		return (-1);
-	if (len == 0 && (*line)[0] == '\0')
-			return (0);
-	return (1);
-}
-
-/*
-**	1) fd compared with those stored in the list.
-**	2) if it is in the list then continues gnl otherwise create a new link and
-**	puts it at the end of the list.
-**	3) gets and returns the function return "read_line".
-*/
-
-int				get_next_line(const int fd, char **line)
-{
-	static	t_gnl	*other_files = NULL;
-	t_gnl			*current_file;
-	int				ret_current_file;
-
-	if (line == NULL)
-		return (-1);
-	current_file = other_files;
-	while (current_file != NULL)
-	{
-		if (current_file->fd == fd)
-			break ;
-		current_file = current_file->next;
-	}
-	if (current_file == NULL)
-	{
-		if ((current_file = initializes_and_push(&other_files, fd)) == NULL)
-			return (-1);
-	}
-	ret_current_file = read_line(current_file, line);
-	if (ret_current_file < 1)
-	{
-		free(*line);
-		*line = NULL;
-	}
-	return (ret_current_file);
+	tmp->line = get_line(tmp, line);
+	if (!ft_strlen(tmp->line) && !ft_strlen(*line) && !ret)
+		return (0);
+	else
+		return (1);
 }

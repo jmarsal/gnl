@@ -6,12 +6,12 @@
 #    By: jmarsal <jmarsal@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/02 15:19:59 by jmarsal           #+#    #+#              #
-#*   Updated: 2016/05/21 00:10:34 by jmarsal          ###   ########.fr       *#
+#*   Updated: 2016/04/26 00:19:32 by jmarsal          ###   ########.fr       *#
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libft.a
-CC = gcc -O3
+CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 INC = -I./includes/
 SRC = ft_putchar.c ft_putstr.c ft_strlen.c ft_putnbr.c ft_atoi.c ft_strncmp.c \
