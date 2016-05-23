@@ -6,7 +6,7 @@
 /*   By: jmarsal  <jmarsal @student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/21 19:47:53 by jmarsal           #+#    #+#             */
-/*   Updated: 2016/05/21 01:27:33 by jmarsal          ###   ########.fr       */
+/*   Updated: 2016/05/21 15:06:21 by jmarsal          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ char		*get_line(t_line *list, char **line)
 	*line = ft_strdup(text);
 	ft_strclr(text);
 	ft_strclr(list->line);
+	//free(list->line);
 	return (text);
 }
 

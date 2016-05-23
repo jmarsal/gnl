@@ -6,13 +6,14 @@
 #    By: jmarsal <jmarsal@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/02 15:19:59 by jmarsal           #+#    #+#              #
-#*   Updated: 2016/05/21 01:19:25 by jmarsal          ###   ########.fr       *#
+#*   Updated: 2016/05/21 15:38:23 by jmarsal          ###   ########.fr       *#
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libft.a
-CC = gcc -O3
-CFLAGS = -Wall -Wextra -Werror
+CC = gcc
+OPTI_FLAGS = -O2
+CFLAGS = $(OPTI_FLAGS) -Wall -Wextra -Werror
 INC_PATH = -I./includes/
 SRC = ft_putchar.c ft_putstr.c ft_strlen.c ft_putnbr.c ft_atoi.c ft_strncmp.c \
 	ft_strcmp.c ft_strstr.c ft_strcat.c ft_strncat.c ft_strlcat.c ft_strcpy.c \
@@ -35,6 +36,9 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	ar rc $(NAME) $(OBJ)
 	ranlib $(NAME)
+	@echo "\n-----------------------------------------------------------------"
+	@echo "|\t\033[32;1m$(NAME) has been created with $(OPTI_FLAGS) optimisation\033[0m\t\t|"
+	@echo "-----------------------------------------------------------------\n"
 
 $(OBJ_PATH)/%.o: %.c
 	@mkdir -p $(OBJ_PATH)
@@ -42,8 +46,14 @@ $(OBJ_PATH)/%.o: %.c
 
 clean:
 	rm -rf $(OBJ_PATH)
+	@echo "\n-------------------------------------------------"
+	@echo "|\t\033[31mall libft_files.o are deleted\033[0m\t\t|"
+	@echo "-------------------------------------------------\n"
 
 fclean: clean
 	rm -f $(NAME)
+	@echo "\n-----------------------------------------"
+	@echo "|\t\033[31m$(NAME) is deleted\033[0m\t\t|"
+	@echo "-----------------------------------------\n"
 
 re: fclean all
