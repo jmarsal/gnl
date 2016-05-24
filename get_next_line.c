@@ -6,7 +6,7 @@
 /*   By: jmarsal <jmarsal@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/21 19:47:53 by jmarsal           #+#    #+#             */
-/*   Updated: 2016/05/24 16:29:28 by jmarsal          ###   ########.fr       */
+/*   Updated: 2016/05/24 23:51:51 by jmarsal          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,20 @@ t_gnl		*new_file(const int fd)
 	new_link->line = ft_strnew(0);
 	new_link->next = NULL;
 	return (new_link);
+}
+
+void		add_file(t_gnl *list_files, t_gnl *new_link)
+{
+	while (list_files)
+	{
+		if (list_files->next == NULL)
+		{
+			list_files->next = new_link;
+			new_link->next = NULL;
+		}
+		list_files = list_files->next;
+	}
+
 }
 
 int			read_file(int fd, t_gnl *list)
@@ -42,7 +56,7 @@ int			read_file(int fd, t_gnl *list)
 			tmp = list->line;
 			if (!(list->line = ft_strjoin(list->line, buf)))
 				return (-1);
-			//free(tmp);
+			free(tmp);
 		}
 		if (ret < BUFF_SIZE)
 			return (ret);
@@ -93,7 +107,7 @@ int			get_next_line(int const fd, char **line)
 		if (current_file->fd == fd)
 			break ;
 		if (current_file->next == NULL)
-			ft_lstadd((t_list**)&current_file, (t_list*) new_file(fd));
+			add_file(current_file, new_file(fd));
 		current_file = current_file->next;
 	}
 	if ((ret = read_file(fd, current_file)) == -1)

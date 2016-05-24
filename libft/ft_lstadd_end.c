@@ -1,30 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_lstadd_end.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jmarsal <jmarsal@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/04/21 19:34:22 by jmarsal           #+#    #+#             */
-/*   Updated: 2016/05/24 23:25:34 by jmarsal          ###   ########.fr       */
+/*   Created: 2016/05/24 23:00:03 by jmarsal           #+#    #+#             */
+/*   Updated: 2016/05/24 23:32:25 by jmarsal          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# define BUFF_SIZE 1
-# define EOL '\n'
+#include "libft.h"
 
-# include "libft.h"
-# include <unistd.h>
+/*
+**	Ajoute l'element new en fin de liste.
+*/
 
-typedef struct		s_gnl
+void	ft_lstadd_end(t_list **alst, t_list *new)
 {
-	int				fd;
-	char			*line;
-	struct s_gnl	*next;
-}					t_gnl;
+	t_list	*cur;
 
-int					get_next_line(const int fd, char **line);
-
-#endif
+	cur = *alst;
+	if (cur)
+	{
+		while (cur->next)
+			cur = cur->next;
+		cur->next = new;
+	}
+	else
+		*alst = new;
+}
