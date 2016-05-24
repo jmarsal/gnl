@@ -6,7 +6,7 @@
 /*   By: jmarsal <jmarsal@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/21 19:47:53 by jmarsal           #+#    #+#             */
-/*   Updated: 2016/05/24 16:23:31 by jmarsal          ###   ########.fr       */
+/*   Updated: 2016/05/24 16:29:28 by jmarsal          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int			read_file(int fd, t_gnl *list)
 			tmp = list->line;
 			if (!(list->line = ft_strjoin(list->line, buf)))
 				return (-1);
-			free(tmp);
+			//free(tmp);
 		}
 		if (ret < BUFF_SIZE)
 			return (ret);
