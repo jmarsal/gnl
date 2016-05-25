@@ -1,30 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strclr.c                                        :+:      :+:    :+:   */
+/*   ft_swap.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmarsal <jmarsal@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vquesnel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/01/09 16:02:58 by jmarsal           #+#    #+#             */
-/*   Updated: 2016/05/25 11:48:07 by jmarsal          ###   ########.fr       */
+/*   Created: 2015/12/01 19:03:46 by vquesnel          #+#    #+#             */
+/*   Updated: 2015/12/01 19:05:15 by vquesnel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-/*
-**	Assigne la valeur ’\0’ à tous les caractères de la chaine passée en
-**	paramètre.
-*/
-
-void	ft_strclr(char *s)
+void	ft_swap(int *a, int *b)
 {
-	if (s)
-	{
-		while (*s != '\0')
-		{
-			*s = '\0';
-			s++;
-		}
-	}
+	int	tmp;
+
+	tmp = *a;
+	*a = *b;
+	*b = tmp;
 }

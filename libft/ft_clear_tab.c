@@ -1,30 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strclr.c                                        :+:      :+:    :+:   */
+/*   ft_clear_tab.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmarsal <jmarsal@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vquesnel <vquesnel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/01/09 16:02:58 by jmarsal           #+#    #+#             */
-/*   Updated: 2016/05/25 11:48:07 by jmarsal          ###   ########.fr       */
+/*   Created: 2016/03/08 23:18:21 by vquesnel          #+#    #+#             */
+/*   Updated: 2016/03/08 23:19:40 by vquesnel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-/*
-**	Assigne la valeur ’\0’ à tous les caractères de la chaine passée en
-**	paramètre.
-*/
-
-void	ft_strclr(char *s)
+int		ft_clear_tab(char **tab)
 {
-	if (s)
+	int	i;
+
+	i = 0;
+	if (tab)
 	{
-		while (*s != '\0')
+		while (tab[i])
 		{
-			*s = '\0';
-			s++;
+			free(tab[i]);
+			i++;
 		}
+		free(tab);
 	}
+	return (1);
 }

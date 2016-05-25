@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jmarsal <jmarsal@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/04/21 19:47:53 by jmarsal           #+#    #+#             */
-/*   Updated: 2016/05/24 23:51:51 by jmarsal          ###   ########.fr       */
+/*   Created: 2016/05/25 12:14:21 by jmarsal           #+#    #+#             */
+/*   Updated: 2016/05/25 15:08:45 by jmarsal          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,39 +24,51 @@ t_gnl		*new_file(const int fd)
 	return (new_link);
 }
 
-void		add_file(t_gnl *list_files, t_gnl *new_link)
+char		*get_line(t_gnl *list, char **line)
 {
-	while (list_files)
-	{
-		if (list_files->next == NULL)
-		{
-			list_files->next = new_link;
-			new_link->next = NULL;
-		}
-		list_files = list_files->next;
-	}
+	char	*swap;
+	char	*complete_line;
+	int		i;
 
+	swap = NULL;
+	i = 0;
+	complete_line = list->line;
+	while (complete_line[i])
+	{
+		if (complete_line[i] == EOL)
+		{
+			*line = ft_strsub(complete_line, 0, i);
+			swap = complete_line;
+			complete_line = ft_strdup(complete_line + (i + 1));
+			free(swap);
+			return (complete_line);
+		}
+		i++;
+	}
+	*line = ft_strdup(complete_line);
+	ft_strclr(complete_line);
+	ft_strclr(list->line);
+	return (complete_line);
 }
 
 int			read_file(int fd, t_gnl *list)
 {
 	int		ret;
-	char	buf[BUFF_SIZE + 1];
-	char	*tmp;
+	char	buffer[BUFF_SIZE + 1];
+	char	*swap;
 
-	tmp = NULL;
-	ret = -42;
+	swap = NULL;
 	while (!ft_strchr(list->line, EOL))
 	{
-		if ((ret = read(fd, buf, BUFF_SIZE)) < 0)
+		if ((ret = read(fd, buffer, BUFF_SIZE)) < 0)
 			return (-1);
 		else
 		{
-			buf[ret] = 0;
-			tmp = list->line;
-			if (!(list->line = ft_strjoin(list->line, buf)))
+			buffer[ret] = 0;
+			swap = list->line;
+			if (!(list->line = ft_strjoin(list->line, buffer)))
 				return (-1);
-			free(tmp);
+			free(swap);
 		}
 		if (ret < BUFF_SIZE)
 			return (ret);
@@ -64,57 +76,27 @@ int			read_file(int fd, t_gnl *list)
 	return (ret);
 }
 
-char		*get_line(t_gnl *list, char **line)
-{
-	char	*tmp;
-	char	*text;
-	int		i;
-
-	tmp = NULL;
-	i = 0;
-	text = list->line;
-	while (text[i])
-	{
-		if (text[i] == EOL)
-		{
-			*line = ft_strsub(text, 0, i);
-			tmp = text;
-			text = ft_strdup(text + (i + 1));
-			free(tmp);
-			return (text);
-		}
-		i++;
-	}
-	*line = ft_strdup(text);
-	ft_strclr(text);
-	ft_strclr(list->line);
-	return (text);
-}
-
 int			get_next_line(int const fd, char **line)
 {
 	static	t_gnl		*list_files;
 	int					ret;
-	t_gnl				*current_file;
+	t_gnl				*file_tmp;
 
 	if (!list_files)
 		list_files = new_file(fd);
-	current_file = list_files;
+	file_tmp = list_files;
 	if (fd < 0 || !line)
 		return (-1);
-	while (current_file)
+	while (file_tmp)
 	{
-		if (current_file->fd == fd)
+		if (file_tmp->fd == fd)
 			break ;
-		if (current_file->next == NULL)
-			add_file(current_file, new_file(fd));
-		current_file = current_file->next;
+		if (file_tmp->next == NULL)
+			ft_lstadd_end((t_list**)&file_tmp, (t_list*)new_file(fd));
+		file_tmp = file_tmp->next;
 	}
-	if ((ret = read_file(fd, current_file)) == -1)
+	if ((ret = read_file(fd, file_tmp)) == -1)
 		return (-1);
-	current_file->line = get_line(current_file, line);
-	if (!ft_strlen(current_file->line) && !ft_strlen(*line) && !ret)
-		return (0);
-	else
-		return (1);
+	file_tmp->line = get_line(file_tmp, line);
+	return ((!ft_strlen(file_tmp->line) && !ft_strlen(*line) && !ret) ? 0 : 1);
 }
