@@ -6,7 +6,7 @@
 /*   By: jmarsal <jmarsal@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/25 12:14:03 by jmarsal           #+#    #+#             */
-/*   Updated: 2016/05/25 14:54:31 by jmarsal          ###   ########.fr       */
+/*   Updated: 2016/05/25 23:24:57 by jmarsal          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include "libft.h"
 # include <unistd.h>
-# define BUFF_SIZE 1024
+# define BUFF_SIZE 10000
 # define EOL '\n'
 
 typedef struct		s_gnl
