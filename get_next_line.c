@@ -6,7 +6,7 @@
 /*   By: jmarsal <jmarsal@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/25 12:14:21 by jmarsal           #+#    #+#             */
-/*   Updated: 2016/05/25 15:08:45 by jmarsal          ###   ########.fr       */
+/*   Updated: 2016/06/01 15:19:21 by jmarsal          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ int			read_file(int fd, t_gnl *list)
 	char	*swap;
 
 	swap = NULL;
+	ret = 1;
 	while (!ft_strchr(list->line, EOL))
 	{
 		if ((ret = read(fd, buffer, BUFF_SIZE)) < 0)
